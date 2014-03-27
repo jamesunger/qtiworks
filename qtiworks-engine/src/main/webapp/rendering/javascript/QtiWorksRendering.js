@@ -448,6 +448,172 @@ var QtiWorksRendering = (function() {
             });
         };
     };
+    
+    /************************************************************/
+    /* drawingInteraction */
+    var DrawingInteraction = function () {
+    	var board;
+    	var lineMode = false;
+    	var ptsSelected = [];
+    	var ptsCreated = [];
+    	var linesCreated = [];
+    	var isSnapTo = false;
+    	
+    	var gridObject = $('[type=grid]');
+		var gridImg = $('[type=gridImg]');
+		var boundsArray = gridObject.attr('bounds').split(' ');
+		if (!boundsArray || boundsArray.length < 4) {
+			boundsArray = [-5,5,5,-5];
+		}
+		var gridContainer = $('#jxgbox');
+		var styleString = "";
+		if (gridContainer.attr('height')) {
+			styleString += 'height: '+gridContainer.attr('height')+'px;';
+		} else {
+			styleString += 'height: 300px;';
+		}
+		if (gridContainer.attr('width')) {
+			styleString += 'width: '+gridContainer.attr('width')+'px;';
+		} else {
+			styleString += 'width: 500px;';
+		}
+		isSnapTo = (gridObject.attr('snapTo') == 'true');
+		gridContainer.attr('style', styleString);
+		board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [boundsArray[0],boundsArray[1],boundsArray[2],boundsArray[3]], axis: gridObject.attr('axis'), grid: gridObject.attr('grid'), showCopyright: false, showNavigation: false});
+		if (!gridImg.attr('height')) {
+			gridImg.attr('height', '100');
+		}
+		if (!gridImg.attr('width')) {
+			gridImg.attr('width', '100')
+		}
+		var im = board.create('image',[gridImg.attr('data'), [0,0], [gridImg.attr('width'), gridImg.attr('height')] ]);
+		$('#linedirections').hide();
+		$('#jxgbox').mousedown(function(e) {
+			switch (e.which) {
+				case 1:
+					if (lineMode) {
+						lineSelect(e);
+					} else {
+						down(e);
+					}
+					break;
+				case 3:
+					remove(e);
+					break;
+				default:
+					alert('You have a strange mouse');
+			}
+		});
+		$('#drawline').click(function () {
+			$("#linedirections").toggle(this.checked);
+			lineMode = this.checked;
+		});
+		$('#resetButton').click(function () {
+			var element;
+			for (element in board.objects) {
+				try {
+					if (containsId(element) >= 0) {
+						board.removeObject(board.objects[element]);
+					}
+				}
+				catch (err)
+				{
+					// do nothing
+				}
+			}
+			ptsCreated = [];
+			ptsSelected = [];
+			linesCreated = [];
+			//$('#points').empty();
+		});
+		
+		var getMouseCoords = function(e, i) {
+	        var cPos = board.getCoordsTopLeftCorner(e, i),
+	            absPos = JXG.getPosition(e, i),
+	            dx = absPos[0]-cPos[0],
+	            dy = absPos[1]-cPos[1];
+	 
+	        return new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx, dy], board);
+	    },
+		down = function(e) {
+	        var canCreate = true, i, coords, el;
+	 
+	        if (e[JXG.touchProperty]) {
+	            // index of the finger that is used to extract the coordinates
+	            i = 0;
+	        }
+	        coords = getMouseCoords(e, i);
+	 
+	        for (el in board.objects) {
+	            if(JXG.isPoint(board.objects[el]) && board.objects[el].hasPoint(coords.scrCoords[1], coords.scrCoords[2])) {
+	                canCreate = false;
+	                break;
+	            }
+	        }
+	 
+	        if (canCreate) {
+	            var newPoint = board.create('point', [coords.usrCoords[1], coords.usrCoords[2]], {snapToGrid:isSnapTo, withLabel:false});
+				JXG.addEvent(newPoint.rendNode, 'mouseover', 
+	             function(){ if (lineMode) {$("ellipse").css('cursor', 'crosshair');} else {$("ellipse").css('cursor', 'default');}}, 
+	             newPoint);
+				ptsCreated.push(newPoint.id);
+	        }
+	    },
+	    lineSelect = function(e) {
+	        var i, coords, el;
+	 
+	        if (e[JXG.touchProperty]) {
+	            // index of the finger that is used to extract the coordinates
+	            i = 0;
+	        }
+	        coords = getMouseCoords(e, i);
+	 
+	        for (el in board.objects) {
+	            if(JXG.isPoint(board.objects[el]) && board.objects[el].hasPoint(coords.scrCoords[1], coords.scrCoords[2])) {
+	                ptsSelected.push(board.objects[el]);
+	                break;
+	            }
+	        }
+			if (ptsSelected.length >= 2) {
+				var newLine = board.create('line',[ptsSelected[0],ptsSelected[1]], {straightFirst:false, straightLast:false,strokeColor:'#00ff00',strokeWidth:2});
+				linesCreated.push(newLine.id);
+				ptsSelected = [];
+			}
+	    },
+		remove = function(e) {
+			var i, newcoords, el;
+			
+			if (e[JXG.touchProperty]) {
+	            // index of the finger that is used to extract the coordinates
+	            i = 0;
+	        }
+	        newcoords = getMouseCoords(e, i);
+	 
+	        for (el in board.objects) {
+	            if(JXG.isPoint(board.objects[el]) && board.objects[el].hasPoint(newcoords.scrCoords[1], newcoords.scrCoords[2])) {
+					var eX = board.objects[el].XEval();
+					var eY = board.objects[el].YEval();
+	                board.removeObject(board.objects[el]);
+					ptsCreated.splice(containsId(el),1);
+	                break;
+	            }
+	        }
+			for (var k = linesCreated.length-1; k >= 0; k--) {
+				if (!board.objects[linesCreated[k]]) {
+					linesCreated.splice(k, 1);
+				}
+			}
+			//$('#points').empty();
+		},
+		containsId = function(e) {
+			for (var a = 0; a < ptsCreated.length; a++) {
+				if (ptsCreated[a] == e) {
+					return a;
+				}
+			}
+			return -1;
+		}
+    };
 
     /************************************************************/
     /* Interactions using Applets.
@@ -555,6 +721,10 @@ var QtiWorksRendering = (function() {
 
         registerGapMatchInteraction: function(responseIdentifier, gapChoiceData, gapData) {
             new GapMatchInteraction(responseIdentifier, gapChoiceData, gapData).init();
+        },
+        
+        registerDrawingInteraction: function() {
+            new DrawingInteraction().init();
         },
 
         registerAppletBasedInteractionContainer: function(containerId, responseIdentifiers) {
