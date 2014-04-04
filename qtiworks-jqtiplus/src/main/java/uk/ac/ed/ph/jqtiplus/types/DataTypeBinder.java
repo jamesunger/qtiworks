@@ -37,12 +37,16 @@ import uk.ac.ed.ph.jqtiplus.exception.QtiParseException;
 import uk.ac.ed.ph.jqtiplus.internal.util.Assert;
 import uk.ac.ed.ph.jqtiplus.internal.util.Pair;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.joda.time.LocalTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Helper class to bind certain QTI data types to and from Strings.
@@ -69,7 +73,7 @@ public final class DataTypeBinder {
         return value ? "true" : "false";
     }
 
-    //--------------------------------------------
+    // --------------------------------------------
 
     public static Date parseDate(final String string) {
         Assert.notNull(string);
@@ -105,7 +109,7 @@ public final class DataTypeBinder {
         // Removes + sign because of Integer.parseInt cannot handle it.
         String s = string;
         if (string.startsWith("+")) {
-            s  = string.substring(1);
+            s = string.substring(1);
             if (s.length() == 0 || !Character.isDigit(s.codePointAt(0))) {
                 throw new QtiParseException("Invalid integer '" + string + "'");
             }
@@ -123,14 +127,14 @@ public final class DataTypeBinder {
         return Integer.toString(value);
     }
 
-    //--------------------------------------------
+    // --------------------------------------------
 
     public static long parseLong(final String string) {
         Assert.notNull(string);
 
         String s = string;
         if (string.startsWith("+")) {
-            s  = string.substring(1);
+            s = string.substring(1);
             if (s.length() == 0 || !Character.isDigit(s.codePointAt(0))) {
                 throw new QtiParseException("Invalid integer '" + string + "'");
             }
@@ -147,7 +151,7 @@ public final class DataTypeBinder {
         return Long.toString(value);
     }
 
-    //--------------------------------------------
+    // --------------------------------------------
 
     public static double parseFloat(final String string) {
         Assert.notNull(string);
@@ -177,7 +181,7 @@ public final class DataTypeBinder {
         return Double.toString(value);
     }
 
-    //--------------------------------------------
+    // --------------------------------------------
 
     public static Pair<Identifier, Identifier> parsePair(final String string) {
         Assert.notNull(string);
@@ -201,7 +205,7 @@ public final class DataTypeBinder {
         return first.toString() + " " + second.toString();
     }
 
-    //--------------------------------------------
+    // --------------------------------------------
 
     public static int[] parsePoint(final String string) {
         Assert.notNull(string);
@@ -225,7 +229,7 @@ public final class DataTypeBinder {
         return horizontalValue + " " + verticalValue;
     }
 
-    //--------------------------------------------
+    // --------------------------------------------
 
     public static URI parseUri(final String string) {
         Assert.notNull(string);
@@ -243,6 +247,40 @@ public final class DataTypeBinder {
 
     public static String toString(final URI uri) {
         return uri.toString();
+    }
+
+    public static BigDecimal parseBigDecimal(final String string) {
+        try {
+            return new BigDecimal(string);
+        }
+        catch (final NumberFormatException e) {
+            throw new QtiParseException("Invalid decimal '" + string + "'", e);
+        }
+    }
+
+    /**
+     * Parses xsd:time // ISO 8601 strings
+     * @param iso8601Time A string containing the ISO 8601 representation of time used by the xsd:time datatype
+     * @return
+     */
+    public static LocalTime parseTime(final String iso8601Time) throws QtiParseException {
+        try {
+            return ISODateTimeFormat.localTimeParser().parseLocalTime(iso8601Time);
+        }
+        catch (final UnsupportedOperationException e) {
+            throw new QtiParseException("Invalid time '" + iso8601Time + "'", e);
+        }
+        catch (final IllegalArgumentException e) {
+            throw new QtiParseException("Invalid time '" + iso8601Time + "'", e);
+        }
+    }
+
+    /**
+     * @param localTime
+     * @return A string containing the ISO 8601 representation of the calendar's time used by the xsd:time datatype
+     */
+    public static String toString(final LocalTime localTime) {
+        return ISODateTimeFormat.time().print(localTime);
     }
 
 }
