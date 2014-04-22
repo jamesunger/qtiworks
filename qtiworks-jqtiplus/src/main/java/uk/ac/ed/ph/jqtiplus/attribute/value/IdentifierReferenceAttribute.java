@@ -59,12 +59,10 @@ public class IdentifierReferenceAttribute extends SingleAttribute<Identifier> {
         super(parent, localName, namespaceUri, defaultValue, required);
     }
 
-	@Override
     protected Identifier parseQtiString(final String value) {
         return Identifier.parseString(value);
     }
 
-    @Override
     protected String toQtiString(final Identifier value) {
         return value.toString();
     }
@@ -74,4 +72,22 @@ public class IdentifierReferenceAttribute extends SingleAttribute<Identifier> {
         super.validateBasic(context);
         // TODO: Ensure that some other portion of the document declares the referenced identifier.
     }
+
+	/* (non-Javadoc)
+	 * @see uk.ac.ed.ph.jqtiplus.attribute.Attribute#parseDomAttributeValue(java.lang.String)
+	 */
+	@Override
+	public Identifier parseDomAttributeValue(final String domAttributeValue) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.ed.ph.jqtiplus.attribute.Attribute#toDomAttributeValue(java.lang.Object)
+	 */
+	@Override
+	public String toDomAttributeValue(final Identifier value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

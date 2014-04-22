@@ -39,7 +39,7 @@ package uk.ac.ed.ph.qtiworks.samples;
  * @author David McKain
  */
 public final class StandardQtiSampleSet {
-    
+
     private static final QtiSampleSet instance = new QtiSampleSet("Standard QTI 2.1 reference examples",
             "These are the standard QTI 2.1 reference examples that can be downloaded from the IMS website, "
             + "as well as a few additional ones that have been been useful to try out some other features.",
@@ -51,6 +51,7 @@ public final class StandardQtiSampleSet {
             new QtiSampleAssessment(DeliveryStyle.IMS_STANDARD, "ims/choice_multiple.xml"),
             new QtiSampleAssessment(DeliveryStyle.IMS_STANDARD, "ims/choice_multiple_chocolade.xml"),
             new QtiSampleAssessment(DeliveryStyle.IMS_STANDARD, "ims/drawing.xml", new String[] { "images/house.png" }),
+            new QtiSampleAssessment(DeliveryStyle.IMS_STANDARD, "ims/122875D.xml", new String[] { "images/hex.png" }),
             new QtiSampleAssessment(DeliveryStyle.IMS_NO_RESPONSE_PROCESSING, "ims/extended_text.xml", new String[] { "images/postcard.png" }),
             new QtiSampleAssessment(DeliveryStyle.IMS_ADAPTIVE, "ims/feedback_adaptive.xml"),
             new QtiSampleAssessment(DeliveryStyle.IMS_FEEDBACK, "ims/feedback.xml"),
@@ -83,11 +84,11 @@ public final class StandardQtiSampleSet {
             new QtiSampleAssessment(DeliveryStyle.IMS_NO_RESPONSE_PROCESSING, "ims/upload.xml"),
             new QtiSampleAssessment(DeliveryStyle.IMS_NO_RESPONSE_PROCESSING, "ims/upload_composite.xml")
     );
-    
+
     private StandardQtiSampleSet() {
         /* No constructor */
     }
-    
+
     public static QtiSampleSet instance() {
         return instance;
     }

@@ -1,0 +1,9 @@
+#calculator input {
+    font-size:36px;
+}
+#calculator input[type="button"] {
+    width: 20%;
+}
+#spacer {
+    visibility: hidden;
+}

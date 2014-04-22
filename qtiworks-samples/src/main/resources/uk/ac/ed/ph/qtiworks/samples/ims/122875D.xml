@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/imsqti_v2p1.xsd"
+	identifier="MAT.05.TE.1.000NF.F.251" title="Classify Fractions" adaptive="false" timeDependent="false">
+  <outcomeDeclaration identifier="score-133700" cardinality="single" baseType="integer" normalMaximum="4">
+    <defaultValue>
+      <value>0</value>
+    </defaultValue>
+  </outcomeDeclaration>
+  <stylesheet href="../Styles/styles.css" type="text/css"/>
+  <itemBody>
+      <div class="item_stem">
+        <prompt>Draw all the lines of symmetry on this figure.</prompt>
+      </div>
+      <div class="item_pre_stimulus">
+          <drawingInteraction id="img_8fab111e-f243-4080-a320-0aa49bd55dc3" width="250" height="250" bounds="0 10 10 -10" grid="true" snapTo="false">
+			<object data="hex.png" alt="" class="img_8fab111e-f243-4080-a320-0aa49bd55dc3"/>
+          </drawingInteraction>
+      </div>
+  </itemBody>
+</assessmentItem>

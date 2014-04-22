@@ -55,6 +55,8 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import main.java.geometrydrawing.GeometryDrawingExtensionPackage;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.ejb.HibernatePersistence;
 import org.slf4j.Logger;
@@ -165,6 +167,7 @@ public class ServicesConfiguration {
             logger.info("Enabling the MathAssess extensions");
             extensionPackages.add(new MathAssessExtensionPackage(xsltStylesheetCache()));
         }
+        extensionPackages.add(new GeometryDrawingExtensionPackage());
 
         return new JqtiExtensionManager(extensionPackages);
     }

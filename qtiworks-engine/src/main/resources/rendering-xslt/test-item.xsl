@@ -182,6 +182,32 @@ NB: This is used both while being presented, and during review.
           </form>
         </li>
       </xsl:if>
+      <xsl:if test="$hasCalculator">
+      	<link rel="stylesheet" href="{$webappContextPath}/rendering/css/calculator.css?{$qtiWorksVersion}" type="text/css"/>
+      	<xsl:choose>
+      		<xsl:when test="$calcType='Standard'">
+	      		<li>
+		          <form action="" method="post">
+		            <input type="button" value="Standard Calculator" onclick="QtiWorksRendering.calculator();"/>
+		          </form>
+		        </li>
+      		</xsl:when>
+      		<xsl:when test="$calcType='Scientific'">
+	        <li>
+	          <form action="" method="post">
+	            <input type="button" value="Scientific Calculator" onclick="QtiWorksRendering.calculator();"/>
+	          </form>
+	        </li>
+	        </xsl:when>
+	      	<xsl:otherwise>
+	        <li>
+	          <form action="" method="post">
+	            <input type="button" value="Basic Calculator" onclick="QtiWorksRendering.calculator();"/>
+	          </form>
+	        </li>
+	        </xsl:otherwise>
+        </xsl:choose>
+      </xsl:if>
     </ul>
   </xsl:template>
 

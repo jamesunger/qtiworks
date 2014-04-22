@@ -450,14 +450,15 @@ var QtiWorksRendering = (function() {
     };
     
     /************************************************************/
-    /* drawingInteraction */
-    var DrawingInteraction = function () {
+    /* GeometryDrawingInteraction */
+    var GeometryDrawingInteraction = function () {
     	var board;
     	var lineMode = false;
     	var ptsSelected = [];
     	var ptsCreated = [];
     	var linesCreated = [];
     	var isSnapTo = false;
+    	var interaction = this;
     	
     	var gridObject = $('[type=grid]');
 		var gridImg = $('[type=gridImg]');
@@ -479,14 +480,18 @@ var QtiWorksRendering = (function() {
 		}
 		isSnapTo = (gridObject.attr('snapTo') == 'true');
 		gridContainer.attr('style', styleString);
-		board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [boundsArray[0],boundsArray[1],boundsArray[2],boundsArray[3]], axis: gridObject.attr('axis'), grid: gridObject.attr('grid'), showCopyright: false, showNavigation: false});
-		if (!gridImg.attr('height')) {
-			gridImg.attr('height', '100');
+		board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [boundsArray[0],boundsArray[1],boundsArray[2],boundsArray[3]], axis: (gridObject.attr('axis') == 'true'), grid: (gridObject.attr('grid') == 'true'), showCopyright: false, showNavigation: false});
+		if (gridImg.length > 0) {
+			if (!gridImg.attr('height')) {
+				gridImg.attr('height', '5');
+			}
+			if (!gridImg.attr('width')) {
+				gridImg.attr('width', '5')
+			}
+			var h = gridImg.attr('height');
+			var w = gridImg.attr('width');
+			var im = board.create('image',[gridImg.attr('data'), [1,0], [gridImg.attr('width'), gridImg.attr('height')] ]);
 		}
-		if (!gridImg.attr('width')) {
-			gridImg.attr('width', '100')
-		}
-		var im = board.create('image',[gridImg.attr('data'), [0,0], [gridImg.attr('width'), gridImg.attr('height')] ]);
 		$('#linedirections').hide();
 		$('#jxgbox').mousedown(function(e) {
 			switch (e.which) {
@@ -723,12 +728,89 @@ var QtiWorksRendering = (function() {
             new GapMatchInteraction(responseIdentifier, gapChoiceData, gapData).init();
         },
         
-        registerDrawingInteraction: function() {
-            new DrawingInteraction().init();
+        registerGeometryDrawingInteraction: function() {
+            new GeometryDrawingInteraction().init();
         },
 
         registerAppletBasedInteractionContainer: function(containerId, responseIdentifiers) {
             new AppletBasedInteractionContainer(containerId, responseIdentifiers).init();
+        },
+        
+        calculator: function() {
+        	var div=document.createElement("div");
+        	var memory = 0;
+        	var isMemorySet = false;
+        	div.id = "dialog";
+        	div.innerHTML = '<span id="closeCalculator" class="ui-icon ui-icon-circle-close"></span><FORM id="calculator" NAME="Calc"><TABLE BORDER=4><TR><TD><INPUT TYPE="text" maxlength="12" NAME="Input" Size="16"><br></TD></TR><TR><TD><INPUT TYPE="button" NAME="plusminus" VALUE=" +/- " OnClick="makenegative()"><INPUT TYPE="button" id="spacer" value="n/a"><INPUT TYPE="button" id="memset" NAME="memset" VALUE=" MS " OnCLick="memoryset()"><INPUT TYPE="button" id="memrecall" NAME="memrecall" VALUE=" MR " OnClick="memoryrecall()"><INPUT TYPE="button" id="memclear" NAME="memclear" VALUE=" MC " OnClick="memoryclear()"><br><INPUT TYPE="button" NAME="pct" VALUE="  %  " OnClick="Calc.Input.value = Calc.Input.value/100"><INPUT TYPE="button" NAME="seven" VALUE="  7  " OnClick="Calc.Input.value += &#39;7&#39;"><INPUT TYPE="button" NAME="eight" VALUE="  8  " OnCLick="Calc.Input.value += &#39;8&#39;"><INPUT TYPE="button" NAME="nine"  VALUE="  9  " OnClick="Calc.Input.value += &#39;9&#39;"><INPUT TYPE="button" NAME="plus"  VALUE="  +  " OnClick="Calc.Input.value += &#39; + &#39;"><br><INPUT TYPE="button" NAME="sqrt" VALUE="  &#8730;  " OnClick="Calc.Input.value = Math.sqrt(Calc.Input.value)"><INPUT TYPE="button" NAME="four"  VALUE="  4  " OnClick="Calc.Input.value += &#39;4&#39;"><INPUT TYPE="button" NAME="five"  VALUE="  5  " OnCLick="Calc.Input.value += &#39;5&#39;"><INPUT TYPE="button" NAME="six"   VALUE="  6  " OnClick="Calc.Input.value += &#39;6&#39;"><INPUT TYPE="button" NAME="minus" VALUE="  -  " OnClick="Calc.Input.value += &#39; - &#39;"><br><input type="button" id="spacer" value="n/a"><INPUT TYPE="button" NAME="one"   VALUE="  1  " OnClick="Calc.Input.value += &#39;1&#39;"><INPUT TYPE="button" NAME="two"   VALUE="  2  " OnCLick="Calc.Input.value += &#39;2&#39;"><INPUT TYPE="button" NAME="three" VALUE="  3  " OnClick="Calc.Input.value += &#39;3&#39;"><INPUT TYPE="button" NAME="times" VALUE="  x  " OnClick="Calc.Input.value += &#39; * &#39;"><br><INPUT TYPE="button" NAME="clear" VALUE="  c  " OnClick="Calc.Input.value = &#39;&#39;"><INPUT TYPE="button" NAME="zero"  VALUE="  0  " OnClick="Calc.Input.value += &#39;0&#39;"><INPUT TYPE="button" NAME="decimal" VALUE="  .  " OnClick="Calc.Input.value += &#39;.&#39;"><INPUT TYPE="button" NAME="DoIt"  VALUE="  =  " OnClick="Calc.Input.value = eval(Calc.Input.value)"><INPUT TYPE="button" NAME="div"   VALUE="  /  " OnClick="Calc.Input.value += &#39; / &#39;"><br></TD></TR></TABLE></FORM>';
+        	div.style.top = "50%";
+        	div.style.left = "50%";
+        	div.style.height = "auto";
+        	div.style.width = "auto";
+        	div.style.position = "absolute";
+        	//div.style.margin = "-"+$("#dialog").height()+"px 0 0 -"+$("#dialog").width()+"px";
+        	div.style.margin = "-50px 0 0 -100px";
+        	div.style.backgroundColor = "#ffffff";
+        	document.body.appendChild(div);
+        	$("#dialog").draggable();
+        	$("#dialog").resizable({
+        	      aspectRatio: true,
+        		  alsoResize: '#dialog *'
+            });
+        	$( "#closeCalculator" ).click(function() {
+        		  document.body.removeChild(div);
+        	}); 	
+        	
+        	$("#memrecall").attr("disabled", !isMemorySet);
+        	$("#memclear").attr("disabled", !isMemorySet);
+
+        	memoryrecall = function() {
+        	    Calc.Input.value = memory;
+        	}
+
+        	memoryclear = function() {
+        		isMemorySet = false;
+        		$("#memrecall").attr("disabled", !isMemorySet);
+            	$("#memclear").attr("disabled", !isMemorySet);
+        	    memory = 0;
+        	}
+
+        	memoryset = function() {
+        		isMemorySet = true;
+        		$("#memrecall").attr("disabled", !isMemorySet);
+            	$("#memclear").attr("disabled", !isMemorySet);
+        	    memory = Calc.Input.value;
+        	}
+
+        	memoryadd = function() {
+        	    memory = Calc.Input.value + memory;
+        	}
+        	
+        	makenegative = function() {
+        		var currValue = Calc.Input.value;
+        		var isnum = /^\d+$/.test(currValue);
+        		
+        		if (isnum) {
+        			Calc.Input.value *= -1;
+        		} else {
+        			var lastNumber = parseInt(currValue.match(/[-+]?([0-9]*\.[0-9]+|[0-9]+)/));
+        			var index = currValue.indexOf(lastNumber);
+        			if (lastNumber > 0) {
+        				Calc.Input.value = currValue.insert(index, "-" );
+        			} else {
+        				Calc.Input.value = currValue.replace(currValue.charAt(index), "");
+        			}
+        			
+        		}
+        	}
+        	
+        	String.prototype.insert = function (index, string) {
+        		if (index > 0) {
+        			return this.substring(0, index) + string + this.substring(index, this.length);
+        		}
+        		else {
+        			return string + this;
+        		}
+        	};
         },
 
         registerReadyCallback: function(callback) {

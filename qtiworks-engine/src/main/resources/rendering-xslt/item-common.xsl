@@ -9,12 +9,13 @@ rendering.
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:qti="http://www.imsglobal.org/xsd/imsqti_v2p1"
+  xmlns:apip="http://www.imsglobal.org/xsd/apip/apipv1p0/imsapip_qtiv1p0"
   xmlns:m="http://www.w3.org/1998/Math/MathML"
   xmlns:qw="http://www.ph.ed.ac.uk/qtiworks"
   xmlns:saxon="http://saxon.sf.net/"
   xmlns="http://www.w3.org/1999/xhtml"
   xpath-default-namespace="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="qti xs qw saxon m">
+  exclude-result-prefixes="qti xs qw saxon m apip">
 
   <!-- ************************************************************ -->
 
@@ -54,6 +55,11 @@ rendering.
   <!-- Is there templateProcessing or responseProcessing? -->
   <xsl:variable name="hasTemplateProcessing" as="xs:boolean" select="exists(/qti:assessmentItem/qti:templateProcessing)"/>
   <xsl:variable name="hasResponseProcessing" as="xs:boolean" select="exists(/qti:assessmentItem/qti:responseProcessing)"/>
+  
+  <!--  Is there apipAccessibility? -->
+  <xsl:variable name="hasApipAccessibility" as="xs:boolean" select="exists(/qti:assessmentItem/apip:apipAccessibility)"/>
+  <xsl:variable name="hasCalculator" as="xs:boolean" select="exists(/qti:assessmentItem/apip:apipAccessibility/apip:companionMaterialsInfo/apip:calculator)"/>
+  <xsl:variable name="calcType" as="xs:string" select="/qti:assessmentItem/apip:apipAccessibility/apip:companionMaterialsInfo/apip:calculator/apip:calculatorType"/>
 
   <!-- Include stylesheets handling each type of interaction -->
   <xsl:include href="interactions/associateInteraction.xsl"/>
@@ -77,6 +83,7 @@ rendering.
   <xsl:include href="interactions/textEntryInteraction.xsl"/>
   <xsl:include href="interactions/uploadInteraction.xsl"/>
   <xsl:include href="interactions/mathEntryInteraction.xsl"/>
+  <xsl:include href="interactions/geometryDrawingInteraction.xsl"/>
 
   <!-- ************************************************************ -->
 

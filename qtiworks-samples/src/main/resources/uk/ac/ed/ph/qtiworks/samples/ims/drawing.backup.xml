@@ -6,8 +6,11 @@
 	<responseDeclaration identifier="RESPONSE" cardinality="single" baseType="file"/>
     <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float"/>
 	<itemBody>
-		<p>Plot two points, then draw a line.</p>
-		<drawingInteraction id="img_8fab111e-f243-4080-a320-0aa49bd55dc3" width="250" height="250" bounds="0 10 10 -10" grid="false" snapTo="true">
+		<p>Read the following description of Giovanni's house and then colour the picture
+			accordingly.</p>
+		<drawingInteraction responseIdentifier="RESPONSE">
+			<prompt xml:lang="it">Il tetto &#232; rosso e i muri sono gialli.</prompt>
+			<object type="image/png" data="images/house.png" width="144" height="260"/>
 		</drawingInteraction>
 	</itemBody>
 </assessmentItem>
